@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Usage</string>
+    <string name="widget_label">Claude usage</string>
+    <string name="widget_description">Claude session and weekly usage</string>
+</resources>

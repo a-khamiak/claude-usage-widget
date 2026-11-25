@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "min_app_version": 1,
+  "disabled": false,
+  "message": "",
+  "usage_url": "https://api.anthropic.com/api/oauth/usage",
+  "usage_query": "",
+  "beta_header": "oauth-2025-04-20",
+  "authorize_url": "https://claude.com/cai/oauth/authorize",
+  "token_url": "https://platform.claude.com/v1/oauth/token",
+  "redirect_url": "https://platform.claude.com/oauth/code/callback",
+  "client_id": "9d1c250a-e61b-44d9-88ed-5944d1962f5e",
+  "scopes": "user:profile",
+  "fields": {
+    "limits_array": "limits",
+    "kind": "kind",
+    "percent": "percent",
+    "resets_at": "resets_at",
+    "session_kinds": [
+      "session"
+    ],
+    "weekly_kinds": [
+      "weekly_all"
+    ],
+    "legacy_session": "five_hour",
+    "legacy_weekly": "seven_day",
+    "legacy_percent": "utilization"
+  },
+  "polling": {
+    "tap_cooldown_s": 120,
+    "active_interval_min": 15,
+    "idle_interval_min": 60,
+    "idle_after_min": 90,
+    "backoff_start_min": 5,
+    "backoff_max_min": 240,
+    "stale_after_min": 20,
+    "config_ttl_h": 24
+  }
+}
