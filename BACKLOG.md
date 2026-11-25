@@ -24,6 +24,10 @@ Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, 
   - A, rows: no line; a large whitespace gap separates the two rows. Week label pair is bottom-aligned with the week number's bottom edge, so it reads as one row.
   - B, stacked: the right column holds two groups, each with a grey label above the number and a white value below. Bottom-left stays empty; the burst sits beside the session group (keep it inside the padding).
   Aliaksei chose A over B (21:37). Week label stays left-aligned: two alignment edges only, and the row baseline does the pairing. Still to confirm on the device: A versus the version with the line.
+- Macro balance (Aliaksei, 21:39): from a distance the tile should read as clean masses on one grid. Options drawn in chat:
+  1. Three masses: the burst (circle) and the session block (square) are the same size D = (inner width - gap) / 2. The gap equals the padding. Both share top and bottom edges. Inside the square: label at the top edge, number fitted to the width, value at the bottom edge, all left-aligned. The week row sits on the bottom padding as one band (number height = two text lines). Cost: a tall empty band above the line.
+  2. Even 2×2 grid: four equal cells, with gutters equal to the padding. Session row = burst + block; week row = its own burst (light grey, red at ≥80%) + block. Fully symmetric, but adds a second burst, so the spec changes (design decision needed).
+  Decide in M2 on the device.
 - Then check on the device (§3.2 visual QA rule) and fine-tune.
 
 ## Other ideas
