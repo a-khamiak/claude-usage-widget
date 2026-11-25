@@ -27,7 +27,7 @@ Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, 
 - Macro balance (Aliaksei, 21:39): from a distance the tile should read as clean masses on one grid. Options drawn in chat:
   1. Three masses: the burst (circle) and the session block (square) are the same size D = (inner width - gap) / 2. The gap equals the padding. Both share top and bottom edges. Inside the square: label at the top edge, number fitted to the width, value at the bottom edge, all left-aligned. The week row sits on the bottom padding as one band (number height = two text lines). Cost: a tall empty band above the line.
   2. Even 2×2 grid: four equal cells, with gutters equal to the padding. Session row = burst + block; week row = its own burst (light grey, red at ≥80%) + block. Fully symmetric, but adds a second burst, so the spec changes (design decision needed).
-  Decide in M2 on the device.
+  Aliaksei chose option 1 (three masses) and rejected option 2 (21:41). Build option 1 in M2, then fine-tune the band above the week line on the device.
 - Then check on the device (§3.2 visual QA rule) and fine-tune.
 
 ## Other ideas
