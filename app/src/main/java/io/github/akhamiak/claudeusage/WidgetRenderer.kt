@@ -99,17 +99,21 @@ object WidgetRenderer {
         val boxH = 0.41f * g.l
         drawBurst(c, g.left + boxW / 2f, cy, boxH, r?.sessionPct ?: 0, burstColor)
 
-        val digitH = 0.20f * g.l
+        // Right column must clear the burst (D21): digits shrink from 0.20·L to fit.
+        val colLeft = g.left + boxW + 0.04f * g.l
+        val colW = g.right - colLeft
+        val sText = r?.sessionPct?.toString() ?: "--"
+        val digitH = minOf(0.20f * g.l, colW / (DotFont.widthCells(sText) + 5) * DotFont.ROWS)
         val gap7 = g.dp(7f)
         val colH = digitH + gap7 + g.capH
         val numTop = cy - colH / 2f
-        drawNumber(c, r?.sessionPct?.toString() ?: "--", g.right, numTop, digitH, sessionColor)
+        drawNumber(c, sText, g.right, numTop, digitH, sessionColor)
         val caption = when (val m = st.mode) {
             is Mode.Stale -> if (m.ageMs < 0) "OFFLINE" else "OFFLINE · " + Format.age(m.ageMs)
             is Mode.Paused -> "PAUSED · NEXT " + Format.clock(m.nextTryAt, spec.zone, spec.is24h)
             Mode.Normal -> Format.sessionCaption(r?.sessionResetsAt, spec.now)
         }
-        drawText(c, caption, g.right, numTop + digitH + gap7 + g.capH, if (stale) GREY else LABEL, g, Paint.Align.RIGHT)
+        drawText(c, caption, g.right, numTop + digitH + gap7 + g.capH, if (stale) GREY else LABEL, g, Paint.Align.RIGHT, colW)
 
         // Bottom row (D15): WEEK over the reset, week number centred on both lines.
         val gap3 = g.dp(3f)
@@ -170,12 +174,14 @@ object WidgetRenderer {
         }
     }
 
-    private fun drawText(c: Canvas, s: String, x: Float, baseline: Float, color: Int, g: Geo, align: Paint.Align) {
+    private fun drawText(
+        c: Canvas, s: String, x: Float, baseline: Float, color: Int, g: Geo, align: Paint.Align,
+        maxW: Float = g.right - g.left,
+    ) {
         textPaint.color = color
         textPaint.textSize = g.textSize
         textPaint.textAlign = align
         // Shrink to fit the inner width rather than clip.
-        val maxW = g.right - g.left
         val wMeasured = textPaint.measureText(s)
         if (wMeasured > maxW) textPaint.textSize = g.textSize * maxW / wMeasured
         c.drawText(s, x, baseline, textPaint)

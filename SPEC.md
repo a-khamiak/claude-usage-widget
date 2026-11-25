@@ -33,6 +33,7 @@ Source chat for D1–D15: "Claude Usage Widget · v0.1 · spec" (25 Nov 2026). F
 
 | # | Date | Decision |
 |---|---|---|
+| D21 | 25 Nov | Fit rule: at the §3.2 sizes a two-digit session number collides with the burst (0.45·L burst + 0.20·L digits > inner width). The session digits now shrink to fit the column right of the burst (≈0.14·L for two digits); captions shrink to that column too. Revisit proportions on the device in M2. Source: M1 build, preview render. |
 | D20 | 25 Nov | M1 paused mid-build to protect the weekly budget (Aliaksei at 20% weekly). Resume in a fresh chat from HANDOFF.md after the weekly reset. Source: "Claude Usage Widget · v0.1 · M1 build". |
 | D19 | 25 Nov | Countdowns: rounded down to 5 min, but under 5 min show exact minutes. A non-wakeup inexact 5-min alarm re-renders (no network), so countdowns stay within ~5 min while the phone is awake. Source: M1 build. |
 | D18 | 25 Nov | Setup screen gets a launcher icon ("Usage"), so status and sign-out are reachable. It's an exported MAIN/LAUNCHER activity; its one extra (`check_fix`) is gated by the tap cooldown, so other apps can't use it to burn the rate limit. All other components stay non-exported. Source: M1 build. |
