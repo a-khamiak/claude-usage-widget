@@ -8,9 +8,8 @@ Aliaksei's notes: divider too close to WEEK; needs a space in `7H25M`; spacing b
 Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, then log as a decision):
 - One spacing grid: unit u = L/32. Padding 3u on all four sides (= 0.094·L, unchanged).
 - Bottom block: label over value, line gap 1u (was 3 dp).
-- Divider: centred between top block and bottom block, 2.5u clear above and below (was 10 dp above, big gap above).
-- Top block fills from the top padding to 2.5u above the divider; burst and the right column share its vertical centre.
-- Burst 0.36·L (was 0.45·L wide) so the session number can be the largest element again: ≈0.18·L for two digits (fit rule D21 stays). Week number 0.11·L (was 0.13·L). Hierarchy: session > week.
+- Divider optically centred (Aliaksei, 21:33): equal gap between the lowest visible burst dot above and the cap tops of `WEEK` below. Measure from visible edges, not layout boxes.
+- Burst 0.42·L, top edge on the top padding; its visible bottom sets the upper gap. Session column shares the burst's vertical centre; session digits fit the column (≈0.15·L, fit rule D21). Week number 0.10·L. Hierarchy: session > week.
 - Gap burst → right column 0.05·L. All numbers and right-aligned labels end on the same right edge.
 - One label system everywhere: grey label line over a white value line.
   - Session: `SESSION` / `IN 2H 10M` (replaces the one-line `5H · 2H14M`).
