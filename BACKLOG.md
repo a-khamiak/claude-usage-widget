@@ -23,7 +23,7 @@ Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, 
 - Open choice (Aliaksei, 21:35): divider or no divider. No-divider variants shown in chat:
   - A, rows: no line; a large whitespace gap separates the two rows. Week label pair is bottom-aligned with the week number's bottom edge, so it reads as one row.
   - B, stacked: the right column holds two groups, each with a grey label above the number and a white value below. Bottom-left stays empty; the burst sits beside the session group (keep it inside the padding).
-  Decide on the device in M2 (claude recommends A).
+  Aliaksei chose A over B (21:37). Week label stays left-aligned: two alignment edges only, and the row baseline does the pairing. Still to confirm on the device: A versus the version with the line.
 - Then check on the device (§3.2 visual QA rule) and fine-tune.
 
 ## Other ideas
