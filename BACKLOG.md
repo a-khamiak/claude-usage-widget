@@ -20,6 +20,10 @@ Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, 
 - Countdowns get a space between hours and minutes: `7H 25M`, `2H 10M`.
 - Labels one size: 0.058·L (≈10 sp at the 2×2 size); letter-spacing 0.12 em. Label grey #9A9A9C, unlit dots #353537, divider #2E2E30, stale grey #6E6E70.
 - Refreshing dot centred in the corner padding (1.5u, 1.5u), radius 0.016·L.
+- Open choice (Aliaksei, 21:35): divider or no divider. No-divider variants shown in chat:
+  - A, rows: no line; a large whitespace gap separates the two rows. Week label pair is bottom-aligned with the week number's bottom edge, so it reads as one row.
+  - B, stacked: the right column holds two groups, each with a grey label above the number and a white value below. Bottom-left stays empty; the burst sits beside the session group (keep it inside the padding).
+  Decide on the device in M2 (claude recommends A).
 - Then check on the device (§3.2 visual QA rule) and fine-tune.
 
 ## Other ideas
