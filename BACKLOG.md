@@ -1,6 +1,6 @@
 # Backlog (ideas, not built until Aliaksei says so)
 
-- Show the plan type in the setup status line, if the API exposes it reliably.
+- Show the plan type in the setup status line, if the API exposes it reliably. Not on the widget (decided 25 Nov, 21:43): it never changes, the percentages already reflect it, a guessed label risks being wrong, and it would crowd the layout.
 - Renderer golden-image snapshots of all states at 2 sizes (§10; scheduled for M3).
 
 ## Milestone 2 (M2) polish: refined layout (approved direction 25 Nov, chat "Claude Usage Widget · v0.1 · M1 build")
