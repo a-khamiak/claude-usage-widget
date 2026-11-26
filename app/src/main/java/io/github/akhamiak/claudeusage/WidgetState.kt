@@ -147,7 +147,7 @@ object StateMachine {
 object Format {
     private val DAYS = arrayOf("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
 
-    /** Countdown rounded down to 5 min (`2H10M`, `40M`); under 5 min shows exact minutes. */
+    /** Countdown rounded down to 5 min (`2H 10M`, `40M`); under 5 min shows exact minutes (D19, D22). */
     fun countdown(ms: Long): String {
         var m = max(0L, ms) / 60_000L
         if (m >= 5) m -= m % 5
@@ -156,7 +156,7 @@ object Format {
         return when {
             h == 0L -> "${mm}M"
             mm == 0L -> "${h}H"
-            else -> "${h}H${mm}M"
+            else -> "${h}H ${mm}M"
         }
     }
 
@@ -171,11 +171,18 @@ object Format {
 
     fun day(at: Long, zone: ZoneId): String = DAYS[Instant.ofEpochMilli(at).atZone(zone).dayOfWeek.value - 1]
 
-    /** Session caption: `5H · 2H10M`. */
-    fun sessionCaption(resetsAt: Long?, now: Long): String =
-        if (resetsAt == null || resetsAt <= now) "5H" else "5H · " + countdown(resetsAt - now)
+    /** Session value line under `SESSION` (D22): `IN 2H 10M`, or `—` when no window is running. */
+    fun sessionValue(resetsAt: Long?, now: Long): String =
+        if (resetsAt == null || resetsAt <= now) "—" else "IN " + countdown(resetsAt - now)
 
-    /** Week reset line (D15): `WED 14:00` when > 24 h away, else `IN 7H25M`. */
+    /** Limit tile value line under `SESSION RESETS` / `WEEK RESETS`: `IN 1H 40M`, or the day when > 24 h away. */
+    fun limitValue(resetsAt: Long?, now: Long, zone: ZoneId): String = when {
+        resetsAt == null || resetsAt <= now -> "—"
+        resetsAt - now > 24 * 3_600_000L -> day(resetsAt, zone)
+        else -> "IN " + countdown(resetsAt - now)
+    }
+
+    /** Week reset line (D15): `WED 14:00` when > 24 h away, else `IN 7H 25M`. */
     fun weekReset(resetsAt: Long?, now: Long, zone: ZoneId, is24h: Boolean): String = when {
         resetsAt == null || resetsAt <= now -> "—"
         resetsAt - now > 24 * 3_600_000L -> day(resetsAt, zone) + " " + clock(resetsAt, zone, is24h)
