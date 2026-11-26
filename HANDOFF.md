@@ -15,10 +15,12 @@ Done:
 **Not yet compiled.** The sandbox has no Maven/Google Maven access, so GitHub Actions is the only compiler. Expect a round or two of compile fixes.
 
 ## Exact next steps (in order)
+0. Pre-flight (two lines: what's connected, which files you'll read). Add a short `CLAUDE.md` (build rules: the token-economy list in the build-skill memory) and a one-page `CODEMAP.md` (file → purpose, one line each).
+0b. **Apply the chosen layout before the first release (D22):** `BACKLOG.md` → "Milestone 2 (M2) polish", option 1 (three masses), no divider (variant A), week label left, plan name off the widget. Changes stay in `WidgetRenderer.kt` (`drawData`, `drawLimit`, `drawMessage`) and `Format` (space between hours and minutes: `7H 25M`; two-line label system `SESSION` / `IN 2H 10M`, `OFFLINE` / `2H AGO`, `PAUSED` / `NEXT 20:45`). Update `FormatTest` expectations to match. Labels: medium weight, tracking ≈ +6% (his typography rule 5), system font kept (host consistency, rule 3). Do not touch other files.
 1. Write `.github/workflows/build.yml` (push/PR: wrapper validation → `./gradlew lint testDebugUnitTest assembleDebug`), `release.yml` (tag `v*`: decode `KEYSTORE_B64` to `$RUNNER_TEMP`, `KEYSTORE_PATH` env, `-PappVersionName/-PappVersionCode` from the tag, `assembleRelease`, `apksigner verify`, `sha256sum`, `gh release create` with the SHA in the notes; use env vars, never `${{ }}` inside `run`), `watch.yml` (§6.4, Monday 07:41 UTC, `issues: write`), `.github/dependabot.yml` (gradle + github-actions weekly).
    Pinned SHAs (looked up 25 Nov): `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1` (v7.0.1), `actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880` (v6.3.0), `gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c` and `gradle/actions/wrapper-validation@8da46b539cd8fe6ab27ca75128919a18d757604c` (v6.4.1). Java 17 temurin.
 2. Push, then `gh run list` / `gh run view --log-failed` until build.yml is green. Likely spots: org.json test classpath, lint issue IDs, `Activity` edge-to-edge, `RemoteViews` API levels.
-3. Tag `v0.1.0`, check the Release has the signed APK + SHA-256, give Aliaksei the link and the install steps (§9 Install).
+3. Render the states once (e.g. a quick script or golden test) to check the layout against the backlog spec, then tag `v0.1.0`, check the Release has the signed APK + SHA-256, give Aliaksei the link and the install steps (§9 Install).
 4. Scope test (D4): he signs in; the setup screen shows `SCOPE:` and `LAST RESULT:`. Log the result as a new decision.
 5. Close: usage check-in row in §15, CHANGELOG entry, this file → next chat `Claude Usage Widget · v0.1 · M2 polish`, build-index registry.
 
