@@ -14,10 +14,16 @@ Done:
 
 **Not yet compiled.** The sandbox has no Maven/Google Maven access, so GitHub Actions is the only compiler. Expect a round or two of compile fixes.
 
-## Update 26 Nov (chat "Claude Usage Widget · v0.1 · M1 build (resume)")
-Steps 0, 0b, 1, 2, 3 done: CLAUDE.md + CODEMAP.md, D22 layout, CI green first try, v0.1.0 released via the manual trigger (D23).
-Release: https://github.com/a-khamiak/claude-usage-widget/releases/tag/v0.1.0. Open: step 4 (scope test, Aliaksei installing) and step 5 (close).
-For M3: Dependabot PRs for AGP 9.5.3 and Gradle wrapper 9.9.2 fail CI (major bumps, D16); Kotlin 2.4.21 and mockwebserver 5.5.1 pass. Tags: release with `gh workflow run release.yml --ref main -f version=X.Y.Z`.
+## Update 26 Nov, evening: M1 closed
+Next chat: **"Claude Usage Widget · v0.2 · M2 polish"**. Start from SPEC.md + this section only.
+- Done in "Claude Usage Widget · v0.1 · M1 build (resume)": CLAUDE.md + CODEMAP.md, CI (build, release, watch, Dependabot), v0.1.0, scope test passed with `user:profile` (D24), layout round 2 option 3 (D25) released as **v0.2.0** (https://github.com/a-khamiak/claude-usage-widget/releases/tag/v0.2.0). Signing cert matches D17 on both releases.
+- Releases: the sandbox can't push tags; run `gh workflow run release.yml --ref main -f version=X.Y.Z` (D23).
+- Design previews: mockups are pasted into his home-screen screenshot at the real tile size (342 px, corner radius ≈ 0.164·L, tile at x 668, y 1190). Reference text there: ~20 px caps, 2–3 px stems.
+- M2 inputs waiting: his notes after living with v0.2.0; BACKLOG "second swipe card" (dropped in D15, review); corner clearance check on the phone.
+- M3: Dependabot PRs for AGP 9.5.3 and Gradle wrapper 9.9.2 fail CI (major bumps, D16); Kotlin 2.4.21 and mockwebserver 5.5.1 pass. Then the full §11 hardening list.
+- Build cadence: he drops notes over days; save them to BACKLOG.md only, build when he says "build".
+
+The step list below is the original M1 plan, kept for the record.
 
 ## Exact next steps (in order)
 0. Pre-flight (two lines: what's connected, which files you'll read). Add a short `CLAUDE.md` (build rules: the token-economy list in the build-skill memory) and a one-page `CODEMAP.md` (file → purpose, one line each).
