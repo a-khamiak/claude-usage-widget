@@ -33,6 +33,9 @@ Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, 
 ## M2 design notes from the phone (26 Nov, Aliaksei)
 - Padding looks the narrowest of all widgets on his home screen (vs Nothing calendar, Claude widget). Margin is ~32 px on a 340 px tile, same as the calendar, but the burst (top-left) and week % (bottom-right) sit in the rounded corners and look cramped. Benchmark against neighbouring widgets, give corners more clearance, then lock the look.
 
+- v0.2.0 confirmed on the phone (21:08): new layout live. The ≥80% red warning state (session number and burst in red) feels like too much; try the clay/burst orange for the warning instead of red (revisits D9/D10; keep red for the full-red limit tile?). Next build.
+- Release notes: tell him to open the APK link in the Brave app itself; the Claude app's in-app browser gets stuck at "Downloading…" and never saves the file. Next build.
+
 ## Other ideas
 - Revisit a second card you swipe to (26 Nov, Aliaksei). It was considered in the spec chat and dropped by D15 ("no flip-through pages"): the week reset went onto the main tile instead. Review in M2 against what a second card would show that the main tile can't. Note: a swipeable widget needs a different build (a stack of cards fed by the app), not just a new drawing.
 - Widget picker preview image that looks like the real tile.
