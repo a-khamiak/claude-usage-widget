@@ -14,6 +14,11 @@ Done:
 
 **Not yet compiled.** The sandbox has no Maven/Google Maven access, so GitHub Actions is the only compiler. Expect a round or two of compile fixes.
 
+## Update 26 Nov (chat "Claude Usage Widget · v0.1 · M1 build (resume)")
+Steps 0, 0b, 1, 2, 3 done: CLAUDE.md + CODEMAP.md, D22 layout, CI green first try, v0.1.0 released via the manual trigger (D23).
+Release: https://github.com/a-khamiak/claude-usage-widget/releases/tag/v0.1.0. Open: step 4 (scope test, Aliaksei installing) and step 5 (close).
+For M3: Dependabot PRs for AGP 9.5.3 and Gradle wrapper 9.9.2 fail CI (major bumps, D16); Kotlin 2.4.21 and mockwebserver 5.5.1 pass. Tags: release with `gh workflow run release.yml --ref main -f version=X.Y.Z`.
+
 ## Exact next steps (in order)
 0. Pre-flight (two lines: what's connected, which files you'll read). Add a short `CLAUDE.md` (build rules: the token-economy list in the build-skill memory) and a one-page `CODEMAP.md` (file → purpose, one line each).
 0b. **Apply the chosen layout before the first release (D22):** `BACKLOG.md` → "Milestone 2 (M2) polish", option 1 (three masses), no divider (variant A), week label left, plan name off the widget. Changes stay in `WidgetRenderer.kt` (`drawData`, `drawLimit`, `drawMessage`) and `Format` (space between hours and minutes: `7H 25M`; two-line label system `SESSION` / `IN 2H 10M`, `OFFLINE` / `2H AGO`, `PAUSED` / `NEXT 20:45`). Update `FormatTest` expectations to match. Labels: medium weight, tracking ≈ +6% (his typography rule 5), system font kept (host consistency, rule 3). Do not touch other files. **Reference image approved by Aliaksei (26 Nov): `docs/design-final-main.png`.** It's the main (normal) state; the other states (warning, limit, offline, paused, signed out, set up, update, kill switch) follow its grid, masses and label system.
