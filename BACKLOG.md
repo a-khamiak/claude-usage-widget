@@ -31,4 +31,5 @@ Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, 
 - Then check on the device (§3.2 visual QA rule) and fine-tune.
 
 ## Other ideas
+- Revisit a second card you swipe to (26 Nov, Aliaksei). It was considered in the spec chat and dropped by D15 ("no flip-through pages"): the week reset went onto the main tile instead. Review in M2 against what a second card would show that the main tile can't. Note: a swipeable widget needs a different build (a stack of cards fed by the app), not just a new drawing.
 - Widget picker preview image that looks like the real tile.
