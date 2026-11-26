@@ -30,6 +30,9 @@ Refined spec (shown as vector tiles in chat; replaces §3.2 sizes once applied, 
   Aliaksei chose option 1 (three masses) and rejected option 2 (21:41). Build option 1 in M2, then fine-tune the band above the week line on the device.
 - Then check on the device (§3.2 visual QA rule) and fine-tune.
 
+## M2 design notes from the phone (26 Nov, Aliaksei)
+- Padding looks the narrowest of all widgets on his home screen (vs Nothing calendar, Claude widget). Margin is ~32 px on a 340 px tile, same as the calendar, but the burst (top-left) and week % (bottom-right) sit in the rounded corners and look cramped. Benchmark against neighbouring widgets, give corners more clearance, then lock the look.
+
 ## Other ideas
 - Revisit a second card you swipe to (26 Nov, Aliaksei). It was considered in the spec chat and dropped by D15 ("no flip-through pages"): the week reset went onto the main tile instead. Review in M2 against what a second card would show that the main tile can't. Note: a swipeable widget needs a different build (a stack of cards fed by the app), not just a new drawing.
 - Widget picker preview image that looks like the real tile.
