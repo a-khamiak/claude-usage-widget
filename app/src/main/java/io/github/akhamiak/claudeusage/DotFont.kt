@@ -11,7 +11,7 @@ import kotlin.math.sin
  */
 object DotFont {
     const val ROWS = 7
-    const val DOT = 0.72f // dot diameter as a fraction of the cell
+    const val DOT = 0.80f // dot diameter as a fraction of the cell (heavier dots, D25)
 
     val GLYPHS: Map<Char, Array<String>> = mapOf(
         '0' to arrayOf("01110", "10001", "10011", "10101", "11001", "10001", "01110"),
@@ -50,7 +50,7 @@ object DotFont {
 
     /** D4 weighted percent, 4×4; '2' = big dot (1.4× diameter). Top edge sits at the digit top. */
     val PERCENT = arrayOf("2001", "0010", "0100", "1002")
-    const val PERCENT_BIG = 1.4f
+    const val PERCENT_BIG = 1.35f
 
     fun glyph(c: Char): Array<String> = GLYPHS[c] ?: GLYPHS.getValue(' ')
 

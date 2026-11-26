@@ -22,10 +22,10 @@ data class RenderSpec(
 
 /**
  * Draws the 2×2 tile onto a Bitmap (§3, §4).
- * Layout D22 ("three masses", BACKLOG M2 option 1, variant A): one grid with u = L/32 and padding 3u.
- * Top row: burst circle and session square of equal size D, gap = padding. Bottom band: week label pair
- * on the left, week number on the right, its height equal to the two label lines. No divider.
- * One label system everywhere: grey label line over a white value line. Reference: docs/design-final-main.png.
+ * Layout D25 (M2 round 2, option 3): equal margins 0.10·L. Top row: a smaller burst (0.28·L) centred
+ * against the session column (label, dot number fitted to the column width, value). Bottom band: week label
+ * pair on the left, week number on the right, its height equal to the two label lines. No divider.
+ * Text matches the system widgets on his home screen: mixed case, cap height 0.064·L, medium weight.
  */
 object WidgetRenderer {
     private const val TILE = 0xFF1B1B1D.toInt()
@@ -47,7 +47,7 @@ object WidgetRenderer {
     private val dotPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.FILL }
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        letterSpacing = 0.06f // typography rule 5 (D22)
+        letterSpacing = 0.01f // normal spacing, like the system widgets (D25)
     }
 
     fun render(state: WidgetState, spec: RenderSpec): Bitmap {
@@ -63,10 +63,10 @@ object WidgetRenderer {
         when (state) {
             is WidgetState.Data -> drawData(c, g, state, spec)
             is WidgetState.Limit -> drawLimit(c, g, state, spec)
-            WidgetState.NotSetUp -> drawMessage(c, g, listOf("SET", "UP"), CLAY, null, "TAP TO SIGN IN")
-            WidgetState.SignedOut -> drawMessage(c, g, listOf("SIGN", "IN"), WHITE, "SESSION EXPIRED", "TAP TO SIGN IN")
+            WidgetState.NotSetUp -> drawMessage(c, g, listOf("SET", "UP"), CLAY, null, "Tap to sign in")
+            WidgetState.SignedOut -> drawMessage(c, g, listOf("SIGN", "IN"), WHITE, "Session expired", "Tap to sign in")
             WidgetState.EndpointChanged ->
-                drawMessage(c, g, listOf("UPDATE"), WHITE, "USAGE SOURCE CHANGED", "TAP TO CHECK FIX")
+                drawMessage(c, g, listOf("UPDATE"), WHITE, "Usage source changed", "Tap to check fix")
             is WidgetState.KillSwitch ->
                 drawMessage(c, g, listOf("PAUSED"), WHITE, state.message.ifEmpty { null }, null)
         }
@@ -78,22 +78,28 @@ object WidgetRenderer {
         return bmp
     }
 
-    /** Grid geometry in px (BACKLOG M2 polish, D22). */
+    /** Grid geometry in px (D25). */
     private class Geo(val w: Float, val h: Float) {
         val l = minOf(w, h)
         val u = l / 32f
-        val pad = 3f * u
+        val pad = 0.10f * l
         val left = pad
         val right = w - pad
         val top = pad
         val bottom = h - pad
         val innerW = right - left
-        val textSize = 0.058f * l
-        val capH = textSize * 0.711f // Roboto cap height
-        /** Height of a label pair: cap, 1u gap, cap. */
-        val pairH = 2f * capH + u
-        /** Size of the burst circle and the session square. */
-        val d = minOf((innerW - pad) / 2f, bottom - top - pairH - 2f * u)
+        val capH = 0.064f * l
+        val textSize = capH / 0.711f // Roboto cap height
+        /** Gap between the burst and the session column, and before the week number. */
+        val gap = 0.06f * l
+        /** Gap between the session label, number and value. */
+        val g1 = 0.032f * l
+        /** Gap between the two lines of a label pair. */
+        val lineGap = 0.026f * l
+        /** Height of a label pair: cap, gap, cap. */
+        val pairH = 2f * capH + lineGap
+        /** Burst diameter. */
+        val d = 0.28f * l
     }
 
     // ---------- Normal / Warning / Stale / Paused ----------
@@ -109,35 +115,33 @@ object WidgetRenderer {
         val labelColor = if (stale) GREY else LABEL
         val valueColor = if (stale) GREY else WHITE
 
-        // Mass 1: the burst circle, visible edge on the top and left padding.
-        drawBurst(c, g.left + g.d / 2f, g.top + g.d / 2f, g.d, r?.sessionPct ?: 0, burstColor)
-
-        // Mass 2: the session square. Label on its top edge, value on its bottom edge, number between.
-        val x = g.left + g.d + g.pad
+        // Top row: session column (label, number fitted to the width, value), burst centred against it.
+        val x = g.left + g.d + g.gap
         val colW = g.right - x
         val (label, value) = when (val m = st.mode) {
-            is Mode.Stale -> "OFFLINE" to (if (m.ageMs < 0) "—" else Format.age(m.ageMs))
-            is Mode.Paused -> "PAUSED" to "NEXT " + Format.clock(m.nextTryAt, spec.zone, spec.is24h)
-            Mode.Normal -> "SESSION" to Format.sessionValue(r?.sessionResetsAt, spec.now)
+            is Mode.Stale -> "Offline" to (if (m.ageMs < 0) "—" else Format.age(m.ageMs))
+            is Mode.Paused -> "Paused" to "Next " + Format.clock(m.nextTryAt, spec.zone, spec.is24h)
+            Mode.Normal -> "Session" to Format.sessionValue(r?.sessionResetsAt, spec.now)
         }
-        drawText(c, label, x, g.top + g.capH, labelColor, g, Paint.Align.LEFT, colW)
-        val valueBaseline = g.top + g.d
-        drawText(c, value, x, valueBaseline, valueColor, g, Paint.Align.LEFT, colW)
-
         val sText = r?.sessionPct?.toString() ?: "--"
-        val slotTop = g.top + g.capH + 1.5f * g.u
-        val slotBottom = valueBaseline - g.capH - 1.5f * g.u
-        val cell = minOf(colW / numberCells(sText), (slotBottom - slotTop) / visibleRows())
-        val numTop = (slotTop + slotBottom) / 2f - visibleRows() * cell / 2f
-        drawNumber(c, sText, x, numTop, cell, sessionColor)
+        val maxRowH = g.bottom - g.pairH - g.gap - g.top
+        val cell = minOf(colW / numberCells(sText), (maxRowH - 2f * (g.capH + g.g1)) / visibleRows())
+        val colH = 2f * (g.capH + g.g1) + visibleRows() * cell
+        val rowH = maxOf(colH, g.d)
+        val colTop = g.top + (rowH - colH) / 2f
+        drawBurst(c, g.left + g.d / 2f, g.top + rowH / 2f, g.d, r?.sessionPct ?: 0, burstColor)
+        drawText(c, label, x, colTop + g.capH, labelColor, g, Paint.Align.LEFT, colW)
+        drawNumber(c, sText, x, colTop + g.capH + g.g1, cell, sessionColor)
+        drawText(c, value, x, colTop + colH, valueColor, g, Paint.Align.LEFT, colW)
 
-        // Mass 3: the week band on the bottom padding. Number height = the two label lines (variant A).
+        // Bottom band: week label pair on the left, week number on the right, as tall as the pair.
         val bandTop = g.bottom - g.pairH
         val weekText = if (r == null) "—" else Format.weekReset(r.weekResetsAt, spec.now, spec.zone, spec.is24h)
-        drawPair(c, g, "WEEK", weekText, labelColor, valueColor)
+        drawPair(c, g, "Week", weekText, labelColor, valueColor)
         val wText = r?.weekPct?.toString() ?: "--"
-        val wCell = g.pairH / visibleRows()
-        drawNumber(c, wText, g.right - numberCells(wText) * wCell, bandTop, wCell, weekColor)
+        val textEnd = g.left + textWidth(weekText, g)
+        val wCell = minOf(g.pairH / visibleRows(), (g.right - textEnd - g.gap) / numberCells(wText))
+        drawNumber(c, wText, g.right - numberCells(wText) * wCell, bandTop + (g.pairH - visibleRows() * wCell), wCell, weekColor)
     }
 
     private fun drawBurst(c: Canvas, cx: Float, cy: Float, visibleD: Float, pct: Int, lit: Int) {
@@ -204,11 +208,16 @@ object WidgetRenderer {
         c.drawText(s, x, baseline, textPaint)
     }
 
+    private fun textWidth(s: String, g: Geo): Float {
+        textPaint.textSize = g.textSize
+        return minOf(textPaint.measureText(s), g.innerW)
+    }
+
     /** Label pair on the bottom padding, left edge. Either line may be absent; a lone line sits on the bottom. */
     private fun drawPair(c: Canvas, g: Geo, label: String?, value: String?, labelColor: Int, valueColor: Int) {
         if (value != null) {
             drawText(c, value, g.left, g.bottom, valueColor, g, Paint.Align.LEFT)
-            if (label != null) drawText(c, label, g.left, g.bottom - g.capH - g.u, labelColor, g, Paint.Align.LEFT)
+            if (label != null) drawText(c, label, g.left, g.bottom - g.capH - g.lineGap, labelColor, g, Paint.Align.LEFT)
         } else if (label != null) {
             drawText(c, label, g.left, g.bottom, labelColor, g, Paint.Align.LEFT)
         }
@@ -229,7 +238,7 @@ object WidgetRenderer {
         val timeTop = (above + below) / 2f - visibleRows() * timeCell / 2f
         drawWord(c, time, g.left, timeTop, timeCell, WHITE)
 
-        val label = if (st.window == Window.SESSION) "SESSION RESETS" else "WEEK RESETS"
+        val label = if (st.window == Window.SESSION) "Session resets" else "Week resets"
         drawPair(c, g, label, Format.limitValue(st.resetsAt, spec.now, spec.zone), PINK, WHITE)
     }
 
