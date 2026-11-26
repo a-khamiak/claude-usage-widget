@@ -1,0 +1,85 @@
+name: watch
+
+# Weekly endpoint watch (SPEC §6.4). Public sources only; no token or secret; never calls Anthropic's endpoint.
+on:
+  schedule:
+    - cron: "41 7 * * 1" # Monday 07:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write # open an issue on a difference
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Compare public sources with config/endpoint.json
+        env:
+          PULSE: https://raw.githubusercontent.com/G-biggy/claude-pulse-android/main/app/src/main/java/com/ghayyath/claudepulse
+          CHANGELOG_URL: https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md
+        run: |
+          set -euo pipefail
+          W="$RUNNER_TEMP/watch"; mkdir -p "$W"
+          curl -fsSL "$PULSE/ApiClient.kt" -o "$W/ApiClient.kt"
+          curl -fsSL "$PULSE/TokenManager.kt" -o "$W/TokenManager.kt"
+          curl -fsSL "$CHANGELOG_URL" -o "$W/CHANGELOG.md"
+          cat "$W/ApiClient.kt" "$W/TokenManager.kt" > "$W/pulse.kt"
+
+          CFG=config/endpoint.json
+          jq -r '.usage_url, .token_url, .authorize_url, .redirect_url' "$CFG" | sort -u > "$W/cfg_urls"
+          jq -r '.client_id' "$CFG" > "$W/cfg_id"
+          jq -r '.beta_header' "$CFG" > "$W/cfg_beta"
+
+          # OAuth/usage URLs, client IDs (UUIDs) and beta headers found in Claude Pulse.
+          grep -oE 'https://[A-Za-z0-9./_-]*oauth[A-Za-z0-9./_-]*' "$W/pulse.kt" | sed 's/[?].*//' | sort -u > "$W/pulse_urls" || true
+          grep -oiE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' "$W/pulse.kt" | sort -u > "$W/pulse_ids" || true
+          grep -oE 'oauth-[0-9]{4}-[0-9]{2}-[0-9]{2}' "$W/pulse.kt" "$W/CHANGELOG.md" -h | sort -u > "$W/seen_betas" || true
+
+          REPORT="$W/report.md"; : > "$REPORT"
+          diffsec () { # title, ours, theirs
+            local only_ours only_theirs
+            only_ours=$(comm -23 "$2" "$3" || true); only_theirs=$(comm -13 "$2" "$3" || true)
+            if [ -n "$only_ours$only_theirs" ]; then
+              { echo "### $1"; [ -n "$only_ours" ] && printf 'Only in our config:\n```\n%s\n```\n' "$only_ours"
+                [ -n "$only_theirs" ] && printf 'Only upstream:\n```\n%s\n```\n' "$only_theirs"; echo; } >> "$REPORT"
+            fi
+          }
+          diffsec "OAuth and usage URLs (Claude Pulse)" "$W/cfg_urls" "$W/pulse_urls"
+          diffsec "Client ID (Claude Pulse)" "$W/cfg_id" "$W/pulse_ids"
+          diffsec "Beta header (Claude Pulse + Claude Code CHANGELOG)" "$W/cfg_beta" "$W/seen_betas"
+          grep -n -iE 'oauth/usage|/usage endpoint|usage api' "$W/CHANGELOG.md" | head -20 > "$W/usage_mentions" || true
+
+          if [ -s "$REPORT" ]; then
+            {
+              echo "The weekly watch found differences between upstream public sources and \`config/endpoint.json\`."
+              echo "Check them, then update the config (the widget picks it up within 24 h) or close this issue."
+              echo; cat "$REPORT"
+              if [ -s "$W/usage_mentions" ]; then echo "### Usage mentions in the Claude Code CHANGELOG (top lines)"; echo '```'; cat "$W/usage_mentions"; echo '```'; fi
+            } > "$W/body.md"
+            echo "DIFF=1" >> "$GITHUB_ENV"
+            echo "BODY_FILE=$W/body.md" >> "$GITHUB_ENV"
+            cat "$W/body.md"
+          else
+            echo "No differences."
+          fi
+
+      - name: Open issue (once)
+        if: env.DIFF == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TITLE="Endpoint watch: upstream differs from config"
+          if gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq 'length' | grep -qv '^0$'; then
+            echo "An open watch issue already exists."
+          else
+            gh issue create --title "$TITLE" --body-file "$BODY_FILE"
+          fi

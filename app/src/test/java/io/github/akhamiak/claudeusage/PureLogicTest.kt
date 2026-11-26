@@ -219,7 +219,7 @@ class FormatTest {
     private val now = ZonedDateTime.of(2026, 11, 25, 21, 0, 0, 0, zone).toInstant().toEpochMilli()
 
     @Test fun countdownRoundsDownToFive() {
-        assertEquals("2H10M", Format.countdown((2 * 60 + 14) * 60_000L))
+        assertEquals("2H 10M", Format.countdown((2 * 60 + 14) * 60_000L))
         assertEquals("40M", Format.countdown(41 * 60_000L))
         assertEquals("3M", Format.countdown(3 * 60_000L + 59_000))
         assertEquals("2H", Format.countdown(122 * 60_000L))
@@ -230,13 +230,17 @@ class FormatTest {
         val wed = ZonedDateTime.of(2026, 12, 2, 14, 0, 0, 0, zone).toInstant().toEpochMilli()
         assertEquals("WED 14:00", Format.weekReset(wed, now, zone, true))
         assertEquals("WED 2:00PM", Format.weekReset(wed, now, zone, false))
-        assertEquals("IN 7H25M", Format.weekReset(now + (7 * 60 + 27) * 60_000L, now, zone, true))
+        assertEquals("IN 7H 25M", Format.weekReset(now + (7 * 60 + 27) * 60_000L, now, zone, true))
         assertEquals("—", Format.weekReset(null, now, zone, true))
     }
 
     @Test fun captionsAndAge() {
-        assertEquals("5H · 2H10M", Format.sessionCaption(now + (2 * 60 + 14) * 60_000L, now))
-        assertEquals("5H", Format.sessionCaption(null, now))
+        assertEquals("IN 2H 10M", Format.sessionValue(now + (2 * 60 + 14) * 60_000L, now))
+        assertEquals("—", Format.sessionValue(null, now))
+        assertEquals("IN 1H 40M", Format.limitValue(now + 102 * 60_000L, now, zone))
+        val wed = ZonedDateTime.of(2026, 12, 2, 14, 0, 0, 0, zone).toInstant().toEpochMilli()
+        assertEquals("WED", Format.limitValue(wed, now, zone))
+        assertEquals("—", Format.limitValue(null, now, zone))
         assertEquals("2H AGO", Format.age(2 * 3_600_000L + 5))
         assertEquals("41M AGO", Format.age(41 * 60_000L))
         assertEquals("3D AGO", Format.age(3 * 86_400_000L))
