@@ -285,6 +285,7 @@ Measured as: §10 tests green, §11 checklist complete with evidence in `docs/qa
 |---|---|---|---|---|
 | 25 Nov 2026 | Spec session | 9% (resets Thu 01:10) | 18% (resets Wed 14:00) | Pulse audit, endpoint and CI research, 4 mockup rounds, spec |
 | 25 Nov 2026 | M1 build (part 1, paused) | n/a | 20% (reported by Aliaksei; no browser check, to save tokens) | Key + secrets, all app code and unit tests written; not yet compiled; CI workflows not yet written |
+| 26 Nov 2026 | M1 build (resume), M1 closed | 78% (resets 21:20) | 58% (resets Wed 14:00); usage page warns he'll run out Thu evening, before the reset | 95 requests. Split: instructions 55.5%, files and commands 26.6%, learning doc 8.8%, conversation 6.1%, web 1.3%, repo access 0.9%, memory 0.7%. CI files, v0.1.0, scope test, learning doc, 2 mockup rounds, v0.2.0. Lesson: one long chat re-reads its context every turn; M2 design should have started in a fresh chat |
 
 ## 16. Known limitations
 
