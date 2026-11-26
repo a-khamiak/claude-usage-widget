@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import java.util.concurrent.Executors
+import java.util.Locale
 
 /** Single setup screen (§3.5): sign in, status, refresh, usage page, sign out, about. */
 class SetupActivity : Activity() {
@@ -170,7 +171,7 @@ class SetupActivity : Activity() {
                 lines += "NOT SIGNED IN"
             }
             if (s.lastFetchAt > 0) {
-                lines += "LAST RESULT: ${s.lastResult} · ${Format.age(now - s.lastFetchAt)}"
+                lines += "LAST RESULT: ${s.lastResult} · ${Format.age(now - s.lastFetchAt).uppercase(Locale.US)}"
             }
             s.reading?.let { lines += "SESSION ${it.sessionPct}% · WEEK ${it.weekPct}%" }
             if (s.scopeUpgradeNeeded) {

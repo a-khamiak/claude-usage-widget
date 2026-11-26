@@ -145,18 +145,18 @@ object StateMachine {
 
 /** Caption and label formatting (§3.2). Pure; time zone and 12/24 h passed in. */
 object Format {
-    private val DAYS = arrayOf("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
+    private val DAYS = arrayOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
-    /** Countdown rounded down to 5 min (`2H 10M`, `40M`); under 5 min shows exact minutes (D19, D22). */
+    /** Countdown rounded down to 5 min (`2h 10m`, `40 min`); under 5 min shows exact minutes (D19, D25). */
     fun countdown(ms: Long): String {
         var m = max(0L, ms) / 60_000L
         if (m >= 5) m -= m % 5
         val h = m / 60
         val mm = m % 60
         return when {
-            h == 0L -> "${mm}M"
-            mm == 0L -> "${h}H"
-            else -> "${h}H ${mm}M"
+            h == 0L -> "$mm min"
+            mm == 0L -> "${h}h"
+            else -> "${h}h ${mm}m"
         }
     }
 
@@ -165,36 +165,37 @@ object Format {
         return if (is24h) String.format(Locale.US, "%02d:%02d", t.hour, t.minute)
         else {
             val h12 = if (t.hour % 12 == 0) 12 else t.hour % 12
-            String.format(Locale.US, "%d:%02d%s", h12, t.minute, if (t.hour < 12) "AM" else "PM")
+            String.format(Locale.US, "%d:%02d %s", h12, t.minute, if (t.hour < 12) "AM" else "PM")
         }
     }
 
     fun day(at: Long, zone: ZoneId): String = DAYS[Instant.ofEpochMilli(at).atZone(zone).dayOfWeek.value - 1]
 
-    /** Session value line under `SESSION` (D22): `IN 2H 10M`, or `—` when no window is running. */
+    /** Session value line under `Session` (D25): `in 2h 10m`, or `—` when no window is running. */
     fun sessionValue(resetsAt: Long?, now: Long): String =
-        if (resetsAt == null || resetsAt <= now) "—" else "IN " + countdown(resetsAt - now)
+        if (resetsAt == null || resetsAt <= now) "—" else "in " + countdown(resetsAt - now)
 
-    /** Limit tile value line under `SESSION RESETS` / `WEEK RESETS`: `IN 1H 40M`, or the day when > 24 h away. */
+    /** Limit tile value line under `Session resets` / `Week resets`: `in 1h 40m`, or the day when > 24 h away. */
     fun limitValue(resetsAt: Long?, now: Long, zone: ZoneId): String = when {
         resetsAt == null || resetsAt <= now -> "—"
         resetsAt - now > 24 * 3_600_000L -> day(resetsAt, zone)
-        else -> "IN " + countdown(resetsAt - now)
+        else -> "in " + countdown(resetsAt - now)
     }
 
-    /** Week reset line (D15): `WED 14:00` when > 24 h away, else `IN 7H 25M`. */
+    /** Week reset line (D15, D25): `Wed 14:00` when > 24 h away, else `in 7h 25m`. */
     fun weekReset(resetsAt: Long?, now: Long, zone: ZoneId, is24h: Boolean): String = when {
         resetsAt == null || resetsAt <= now -> "—"
         resetsAt - now > 24 * 3_600_000L -> day(resetsAt, zone) + " " + clock(resetsAt, zone, is24h)
-        else -> "IN " + countdown(resetsAt - now)
+        else -> "in " + countdown(resetsAt - now)
     }
 
+    /** Data age (`41 min ago`, `2h ago`, `3d ago`). The setup screen upper-cases it. */
     fun age(ms: Long): String {
         val m = max(0L, ms) / 60_000L
         return when {
-            m < 60 -> "${m}M AGO"
-            m < 24 * 60 -> "${m / 60}H AGO"
-            else -> "${m / (24 * 60)}D AGO"
+            m < 60 -> "$m min ago"
+            m < 24 * 60 -> "${m / 60}h ago"
+            else -> "${m / (24 * 60)}d ago"
         }
     }
 

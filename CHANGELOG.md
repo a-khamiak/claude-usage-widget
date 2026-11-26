@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.0 (26 Nov 2026)
+- D25 layout: text sized and weighted like the system widgets on the home screen, mixed case (`Session`, `in 40 min`, `Wed 14:00`), equal margins, smaller burst, heavier dots, bigger numbers.
+- Scope test passed with `user:profile` (D24).
+
 ## v0.1.0 (26 Nov 2026)
 Chats: "Claude Usage Widget · v0.1 · M1 build" (25 Nov, paused, D20) and "Claude Usage Widget · v0.1 · M1 build (resume)" (26 Nov).
 - D22 layout: three masses on the u = L/32 grid, no divider, two-line labels on every state, spaced countdowns (`7H 25M`).
